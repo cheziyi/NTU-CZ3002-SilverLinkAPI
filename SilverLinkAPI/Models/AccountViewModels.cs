@@ -18,7 +18,7 @@ namespace SilverLinkAPI.Models
     {
         public string LocalLoginProvider { get; set; }
 
-        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
 
         public IEnumerable<UserLoginInfoViewModel> Logins { get; set; }
 
@@ -27,7 +27,7 @@ namespace SilverLinkAPI.Models
 
     public class UserInfoViewModel
     {
-        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
 
         public bool HasRegistered { get; set; }
 
