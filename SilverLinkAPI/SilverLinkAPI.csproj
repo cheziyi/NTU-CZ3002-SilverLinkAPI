@@ -224,10 +224,22 @@
     <Compile Include="Migrations\201702151943305_UpdateUser.Designer.cs">
       <DependentUpon>201702151943305_UpdateUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702152114295_GroupMessages.cs" />
+    <Compile Include="Migrations\201702152114295_GroupMessages.Designer.cs">
+      <DependentUpon>201702152114295_GroupMessages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702152117213_GroupMessages1.cs" />
+    <Compile Include="Migrations\201702152117213_GroupMessages1.Designer.cs">
+      <DependentUpon>201702152117213_GroupMessages1.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Friend.cs" />
+    <Compile Include="Models\Group.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -322,6 +334,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702151943305_UpdateUser.resx">
       <DependentUpon>201702151943305_UpdateUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702152114295_GroupMessages.resx">
+      <DependentUpon>201702152114295_GroupMessages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702152117213_GroupMessages1.resx">
+      <DependentUpon>201702152117213_GroupMessages1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
