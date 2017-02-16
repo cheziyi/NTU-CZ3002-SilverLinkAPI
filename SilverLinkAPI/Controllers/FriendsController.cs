@@ -15,6 +15,8 @@ using Microsoft.AspNet.Identity;
 
 namespace SilverLinkAPI.Controllers
 {
+    [Authorize]
+    [RoutePrefix("api/Friends")]
     public class FriendsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
