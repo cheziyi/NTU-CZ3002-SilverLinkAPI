@@ -7,13 +7,13 @@ namespace SilverLinkAPI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class ChangeIndex : IMigrationMetadata
+    public sealed partial class RoleType : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeIndex));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(RoleType));
         
         string IMigrationMetadata.Id
         {
-            get { return "201702151900522_ChangeIndex"; }
+            get { return "201702161946061_RoleType"; }
         }
         
         string IMigrationMetadata.Source

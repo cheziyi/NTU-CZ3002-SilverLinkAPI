@@ -10,6 +10,7 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using SilverLinkAPI.Providers;
 using SilverLinkAPI.Models;
+using SilverLinkAPI.DAL;
 
 namespace SilverLinkAPI
 {
@@ -38,7 +39,7 @@ namespace SilverLinkAPI
                 TokenEndpointPath = new PathString("/Token"),
                 Provider = new ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromDays(10000000),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(90),
                 // In production mode set AllowInsecureHttp = false
                 AllowInsecureHttp = true
             };

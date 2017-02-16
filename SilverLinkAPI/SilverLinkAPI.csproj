@@ -207,30 +207,28 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\FriendsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201702112127111_InitialCreate.cs" />
-    <Compile Include="Migrations\201702112127111_InitialCreate.Designer.cs">
-      <DependentUpon>201702112127111_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201702161909508_Init.cs" />
+    <Compile Include="Migrations\201702161909508_Init.Designer.cs">
+      <DependentUpon>201702161909508_Init.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201702151900522_ChangeIndex.cs" />
-    <Compile Include="Migrations\201702151900522_ChangeIndex.Designer.cs">
-      <DependentUpon>201702151900522_ChangeIndex.cs</DependentUpon>
+    <Compile Include="Migrations\201702161911389_InitData.cs" />
+    <Compile Include="Migrations\201702161911389_InitData.Designer.cs">
+      <DependentUpon>201702161911389_InitData.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201702151943305_UpdateUser.cs" />
-    <Compile Include="Migrations\201702151943305_UpdateUser.Designer.cs">
-      <DependentUpon>201702151943305_UpdateUser.cs</DependentUpon>
+    <Compile Include="Migrations\201702161946061_RoleType.cs" />
+    <Compile Include="Migrations\201702161946061_RoleType.Designer.cs">
+      <DependentUpon>201702161946061_RoleType.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201702152114295_GroupMessages.cs" />
-    <Compile Include="Migrations\201702152114295_GroupMessages.Designer.cs">
-      <DependentUpon>201702152114295_GroupMessages.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201702152117213_GroupMessages1.cs" />
-    <Compile Include="Migrations\201702152117213_GroupMessages1.Designer.cs">
-      <DependentUpon>201702152117213_GroupMessages1.cs</DependentUpon>
+    <Compile Include="Migrations\201702161957181_Role.cs" />
+    <Compile Include="Migrations\201702161957181_Role.Designer.cs">
+      <DependentUpon>201702161957181_Role.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -240,6 +238,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\PanicEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -326,20 +325,17 @@
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201702112127111_InitialCreate.resx">
-      <DependentUpon>201702112127111_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702161909508_Init.resx">
+      <DependentUpon>201702161909508_Init.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702151900522_ChangeIndex.resx">
-      <DependentUpon>201702151900522_ChangeIndex.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702161911389_InitData.resx">
+      <DependentUpon>201702161911389_InitData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702151943305_UpdateUser.resx">
-      <DependentUpon>201702151943305_UpdateUser.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702161946061_RoleType.resx">
+      <DependentUpon>201702161946061_RoleType.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702152114295_GroupMessages.resx">
-      <DependentUpon>201702152114295_GroupMessages.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201702152117213_GroupMessages1.resx">
-      <DependentUpon>201702152117213_GroupMessages1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201702161957181_Role.resx">
+      <DependentUpon>201702161957181_Role.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

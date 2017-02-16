@@ -7,18 +7,18 @@ namespace SilverLinkAPI.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class GroupMessages : IMigrationMetadata
+    public sealed partial class Role : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(GroupMessages));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Role));
         
         string IMigrationMetadata.Id
         {
-            get { return "201702152114295_GroupMessages"; }
+            get { return "201702161957181_Role"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return null; }
+            get { return Resources.GetString("Source"); }
         }
         
         string IMigrationMetadata.Target

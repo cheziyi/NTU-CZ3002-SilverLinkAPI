@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using SilverLinkAPI.Models;
 using SilverLinkAPI.Providers;
 using SilverLinkAPI.Results;
+using System.Net;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -54,16 +55,18 @@ namespace SilverLinkAPI.Controllers
         // GET api/Account/UserInfo
         [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
         [Route("UserInfo")]
-        public UserInfoViewModel GetUserInfo()
+        public ApplicationUser GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
 
-            return new UserInfoViewModel
-            {
-                PhoneNumber = User.Identity.GetUserName(),
-                HasRegistered = externalLogin == null,
-                LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
-            };
+            return UserManager.FindById(User.Identity.GetUserId());
+
+            //return new UserInfoViewModel
+            //{
+            //    PhoneNumber = User.Identity.GetUserName(),
+            //    HasRegistered = externalLogin == null,
+            //    LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
+            //};
         }
 
         // POST api/Account/Logout
@@ -328,7 +331,14 @@ namespace SilverLinkAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, FullName = model.FullName, Role = model.Role };
+            ApplicationUser user;
+
+            if (model.Role == 1)
+                user = new SilverUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, FullName = model.FullName, Role = model.Role };
+            else if (model.Role == 2)
+                user = new CarerUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, FullName = model.FullName, Role = model.Role };
+            else
+                return BadRequest();
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 

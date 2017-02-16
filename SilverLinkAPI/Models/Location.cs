@@ -10,6 +10,6 @@ namespace SilverLinkAPI.Models
         public int Id { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
-        public DateTime AcquiredTime { get; set; }
+        public DateTime AcquiredAt { get; set; }
     }
 }

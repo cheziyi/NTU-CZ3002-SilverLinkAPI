@@ -9,16 +9,18 @@ namespace SilverLinkAPI.Models
     {
         public int Id { get; set; }
 
-        public string UserId { get; set; }
+        public string UserId1 { get; set; }
 
-        public virtual ApplicationUser User { get; set; }
+        public virtual SilverUser User { get; set; }
 
-        public string FriendId { get; set; }
+        public string UserId2 { get; set; }
 
-        public virtual ApplicationUser UserFriend { get; set; }
+        public virtual SilverUser UserFriend { get; set; }
 
-        public DateTime AddedDate { get; set; }
+        public DateTime RequestedAt { get; set; }
 
-        public virtual ICollection<Message> Messages { get; set; }
+        public DateTime? AcceptedAt { get; set; }
+
+        public ICollection<FriendMessage> Messages { get; set; }
     }
 }

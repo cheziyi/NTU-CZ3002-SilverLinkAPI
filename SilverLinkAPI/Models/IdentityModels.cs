@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using System.Data.Entity;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SilverLinkAPI.Models
 {
@@ -21,44 +22,28 @@ namespace SilverLinkAPI.Models
         }
 
         public string FullName { get; set; }
-        public char Role { get; set; }
         public byte[] ProfilePicture { get; set; }
-
-        public virtual ICollection<Friend> Friends { get; set; }
-        public virtual ICollection<Group> Groups { get; set; }
-        public virtual ICollection<Location> Locations { get; set; }
-        
-
+        public int Role { get; set; }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+
+    [Table("SilverUsers")]
+    public class SilverUser : ApplicationUser
     {
-        // public DbSet<UserProfile> UserProfiles { get; set; }
+        public virtual ICollection<Group> Groups { get; set; }
+        public virtual Location Location { get; set; }
+        public virtual ICollection<CarerUser> Carers { get; set; }
+        public virtual ICollection<PanicEvent> PanicEvents { get; set; }
 
-        public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
-        {
-        }
-
-        public static ApplicationDbContext Create()
-        {
-            return new ApplicationDbContext();
-        }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Friend>()
-                .HasRequired(p => p.User)
-                .WithMany()
-                .HasForeignKey(p => p.UserId)
-                .WillCascadeOnDelete(true);
-            modelBuilder.Entity<Friend>()
-                .HasRequired(p => p.UserFriend)
-                .WithMany()
-                .HasForeignKey(p => p.FriendId)
-                .WillCascadeOnDelete(false);
-        }
+        [NotMapped]
+        public ICollection<Friend> Friends { get; set; }
     }
+
+    [Table("CarerUsers")]
+    public class CarerUser : ApplicationUser
+    {
+        public virtual SilverUser Care { get; set; }
+    }
+
+
 }
