@@ -48,7 +48,7 @@ namespace SilverLinkAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!User.Identity.GetUserId().Equals(user.Id))
+            if (User.Identity.GetUserId() != user.Id)
             {
                 return BadRequest();
             }

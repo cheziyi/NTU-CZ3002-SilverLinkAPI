@@ -45,7 +45,7 @@ namespace SilverLinkAPI.Migrations
             friends.ForEach(s => context.Friends.Add(s));
             context.SaveChanges();
 
-            var friendMsgs = new List<Message>
+            var friendMsgs = new List<FriendMessage>
             {
                 new FriendMessage{FriendId=1,MessageText="Hello!",SilverUserId=manager.FindByName("92299962").Id, SentAt=DateTime.UtcNow},
                 new FriendMessage{FriendId=1,MessageText="Hello to you too!",SilverUserId=manager.FindByName("87654321").Id, SentAt=DateTime.UtcNow},
@@ -60,7 +60,7 @@ namespace SilverLinkAPI.Migrations
                 new Group{Name="Strolling"},
                 new Group{Name="Card Games"},
                 new Group{Name="Board Games"},
-                new Group{Name="Tai chi"},
+                new Group{Name="Tai Chi"},
             };
             groups.ForEach(s => context.Groups.Add(s));
             context.SaveChanges();

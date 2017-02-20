@@ -13,7 +13,7 @@ namespace SilverLinkAPI.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201702201925170_Init"; }
+            get { return "201702202104213_Init"; }
         }
         
         string IMigrationMetadata.Source

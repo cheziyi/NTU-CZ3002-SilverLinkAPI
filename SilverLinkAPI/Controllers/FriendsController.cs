@@ -36,8 +36,8 @@ namespace SilverLinkAPI.Controllers
             string user = User.Identity.GetUserId();
 
             var friends = db.Friends
-                           .Where(f => f.UserId1.Equals(user)
-                           || f.UserId2.Equals(user))
+                           .Where(f => f.UserId1 == user
+                           || f.UserId2 == user)
                            .Where(f => f.AcceptedAt != null)
                            .Include(f => f.User)
                            .Include(f => f.UserFriend)
@@ -45,7 +45,7 @@ namespace SilverLinkAPI.Controllers
 
             foreach (Friend f in friends)
             {
-                if (f.UserId1.Equals(user))
+                if (f.UserId1 == user)
                 {
                     f.User = f.UserFriend;
                 }
@@ -61,7 +61,7 @@ namespace SilverLinkAPI.Controllers
             string user = User.Identity.GetUserId();
 
             var friends = db.Friends
-                         .Where(f => f.UserId2.Equals(user))
+                         .Where(f => f.UserId2 == user)
                          .Where(f => f.AcceptedAt == null)
                          .Include(f => f.User)
                          .ToList();
@@ -91,7 +91,7 @@ namespace SilverLinkAPI.Controllers
             var result = db.Friends.SingleOrDefault(f => f.Id == friendId);
             if (result != null)
             {
-                if (!result.UserId2.Equals(User.Identity.GetUserId()) || result.AcceptedAt != null)
+                if (result.UserId2 != User.Identity.GetUserId() || result.AcceptedAt != null)
                     return BadRequest();
 
                 result.AcceptedAt = DateTime.UtcNow;

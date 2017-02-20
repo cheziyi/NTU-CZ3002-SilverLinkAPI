@@ -333,9 +333,9 @@ namespace SilverLinkAPI.Controllers
 
             ApplicationUser user;
 
-            if (model.Role.Equals(UserRole.Silver))
+            if (model.Role == UserRole.Silver)
                 user = new SilverUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, FullName = model.FullName, Role = model.Role };
-            else if (model.Role.Equals(UserRole.Carer))
+            else if (model.Role == UserRole.Carer)
                 user = new CarerUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber, FullName = model.FullName, Role = model.Role };
             else
                 return BadRequest();
