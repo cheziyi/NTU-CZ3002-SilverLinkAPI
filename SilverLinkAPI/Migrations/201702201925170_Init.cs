@@ -14,11 +14,13 @@ namespace SilverLinkAPI.Migrations
                         Id = c.String(nullable: false, maxLength: 128),
                         FullName = c.String(),
                         ProfilePicture = c.Binary(),
+                        Role = c.Int(nullable: false),
+                        DeviceId = c.String(),
+                        PhoneNumber = c.String(),
                         Email = c.String(maxLength: 256),
                         EmailConfirmed = c.Boolean(nullable: false),
                         PasswordHash = c.String(),
                         SecurityStamp = c.String(),
-                        PhoneNumber = c.String(),
                         PhoneNumberConfirmed = c.Boolean(nullable: false),
                         TwoFactorEnabled = c.Boolean(nullable: false),
                         LockoutEndDateUtc = c.DateTime(),
@@ -59,6 +61,8 @@ namespace SilverLinkAPI.Migrations
                     {
                         Id = c.Int(nullable: false, identity: true),
                         MessageText = c.String(),
+                        MessageData = c.Binary(),
+                        Type = c.Int(nullable: false),
                         SentAt = c.DateTime(nullable: false),
                         SilverUserId = c.String(maxLength: 128),
                     })
@@ -94,6 +98,7 @@ namespace SilverLinkAPI.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        Type = c.Int(nullable: false),
                         Description = c.String(),
                         ActivatedAt = c.DateTime(nullable: false),
                         ResolvedAt = c.DateTime(),
