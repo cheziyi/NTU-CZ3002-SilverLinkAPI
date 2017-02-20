@@ -6,10 +6,13 @@ using Microsoft.AspNet.Identity.Owin;
 using System.Data.Entity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 
 namespace SilverLinkAPI.Models
 {
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
+
+    [DataContract]
     public class ApplicationUser : IdentityUser
     {
 
@@ -20,10 +23,29 @@ namespace SilverLinkAPI.Models
             // Add custom user claims here
             return userIdentity;
         }
-
+        [DataMember]
         public string FullName { get; set; }
+        [DataMember]
         public byte[] ProfilePicture { get; set; }
-        public int Role { get; set; }
+        [DataMember]
+        public UserRole Role { get; set; }
+        [DataMember]
+        public string DeviceId { get; set; }
+
+        [DataMember]
+        public override string Id
+        {
+            get { return base.Id; }
+            set { base.Id = value; }
+        }
+
+        [DataMember]
+        public override string PhoneNumber
+        {
+            get { return base.PhoneNumber; }
+            set { base.PhoneNumber = value; }
+        }
+
     }
 
 
@@ -45,5 +67,11 @@ namespace SilverLinkAPI.Models
         public virtual SilverUser Care { get; set; }
     }
 
+
+    public enum UserRole
+    {
+        Silver = 1,
+        Carer = 2
+    }
 
 }

@@ -12,6 +12,7 @@ using System.Web.Http.Description;
 using SilverLinkAPI.DAL;
 using SilverLinkAPI.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -19,31 +20,38 @@ namespace SilverLinkAPI.Controllers
     [RoutePrefix("api/Friends")]
     public class FriendsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationDbContext db;
+        private ApplicationUserManager manager;
+
+        public FriendsController()
+        {
+            db = new ApplicationDbContext();
+            manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
+        }
+
 
         // GET: api/Friends
         public IEnumerable<Friend> GetFriends()
         {
             string user = User.Identity.GetUserId();
 
-            var friends = from f in db.Friends
-                          where ((f.UserId1.Equals(user)
-                          || f.UserId2.Equals(user)) && f.AcceptedAt != null)
-                          select f;
+            var friends = db.Friends
+                           .Where(f => f.UserId1.Equals(user)
+                           || f.UserId2.Equals(user))
+                           .Where(f => f.AcceptedAt != null)
+                           .Include(f => f.User)
+                           .Include(f => f.UserFriend)
+                           .ToList();
 
-            var friendList = friends.ToList();
-
-            foreach (Friend f in friendList)
+            foreach (Friend f in friends)
             {
-                if (f.UserId2.Equals(user))
+                if (f.UserId1.Equals(user))
                 {
-                    SilverUser temp = f.UserFriend;
-                    f.UserFriend = f.User;
-                    f.User = temp;
+                    f.User = f.UserFriend;
                 }
             }
 
-            return friendList;
+            return friends;
         }
 
         // GET api/Friends/Requests
@@ -52,9 +60,11 @@ namespace SilverLinkAPI.Controllers
         {
             string user = User.Identity.GetUserId();
 
-            var friends = from f in db.Friends
-                          where (f.UserId2.Equals(user) && f.AcceptedAt == null)
-                          select f;
+            var friends = db.Friends
+                         .Where(f => f.UserId2.Equals(user))
+                         .Where(f => f.AcceptedAt == null)
+                         .Include(f => f.User)
+                         .ToList();
 
             return friends;
         }
@@ -64,12 +74,13 @@ namespace SilverLinkAPI.Controllers
         [Route("AddFriend")]
         public async Task<IHttpActionResult> AddFriend(string userId)
         {
+
             var friend = new Friend { UserId1 = User.Identity.GetUserId(), UserId2 = userId, RequestedAt = DateTime.UtcNow };
 
             db.Friends.Add(friend);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = friend.Id }, friend);
+            return Ok();
         }
 
 
@@ -80,7 +91,7 @@ namespace SilverLinkAPI.Controllers
             var result = db.Friends.SingleOrDefault(f => f.Id == friendId);
             if (result != null)
             {
-                if (result.UserId2.Equals(User.Identity.GetUserId()) || result.AcceptedAt != null)
+                if (!result.UserId2.Equals(User.Identity.GetUserId()) || result.AcceptedAt != null)
                     return BadRequest();
 
                 result.AcceptedAt = DateTime.UtcNow;

@@ -40,7 +40,7 @@ namespace SilverLinkAPI.Models
 
         [Required]
         [Display(Name = "Role")]
-        public int Role { get; set; }
+        public UserRole Role { get; set; }
 
         [Required]
         [Display(Name = "FullName")]

@@ -208,7 +208,9 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FriendsController.cs" />
+    <Compile Include="Controllers\GroupsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MessagesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ApplicationDbContext.cs" />
     <Compile Include="Global.asax.cs">
@@ -229,6 +231,18 @@
     <Compile Include="Migrations\201702161957181_Role.cs" />
     <Compile Include="Migrations\201702161957181_Role.Designer.cs">
       <DependentUpon>201702161957181_Role.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702200738360_DeviceId.cs" />
+    <Compile Include="Migrations\201702200738360_DeviceId.Designer.cs">
+      <DependentUpon>201702200738360_DeviceId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702201249070_PanicType.cs" />
+    <Compile Include="Migrations\201702201249070_PanicType.Designer.cs">
+      <DependentUpon>201702201249070_PanicType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702201408379_Test.cs" />
+    <Compile Include="Migrations\201702201408379_Test.Designer.cs">
+      <DependentUpon>201702201408379_Test.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -336,6 +350,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702161957181_Role.resx">
       <DependentUpon>201702161957181_Role.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702200738360_DeviceId.resx">
+      <DependentUpon>201702200738360_DeviceId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702201249070_PanicType.resx">
+      <DependentUpon>201702201249070_PanicType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702201408379_Test.resx">
+      <DependentUpon>201702201408379_Test.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
