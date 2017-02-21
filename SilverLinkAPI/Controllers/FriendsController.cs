@@ -41,6 +41,7 @@ namespace SilverLinkAPI.Controllers
                            .Where(f => f.AcceptedAt != null)
                            .Include(f => f.User)
                            .Include(f => f.UserFriend)
+                           .Include(f => f.Messages.LastOrDefault())
                            .ToList();
 
             foreach (Friend f in friends)
@@ -74,8 +75,17 @@ namespace SilverLinkAPI.Controllers
         [Route("{userId}/Add")]
         public async Task<IHttpActionResult> AddFriend(string userId)
         {
+            string user = User.Identity.GetUserId();
 
-            var friend = new Friend { UserId1 = User.Identity.GetUserId(), UserId2 = userId, RequestedAt = DateTime.UtcNow };
+            var friend = db.Friends
+                           .Where(f => (f.UserId1 == user && f.UserId2 == userId)
+                           || (f.UserId1 == userId && f.UserId2 == user))
+                           .FirstOrDefault();
+
+            if (friend != null)
+                return BadRequest();
+
+            friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.UtcNow };
 
             db.Friends.Add(friend);
             await db.SaveChangesAsync();

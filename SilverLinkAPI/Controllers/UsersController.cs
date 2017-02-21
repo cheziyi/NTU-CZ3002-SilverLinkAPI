@@ -68,9 +68,9 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        // POST api/User/Carers/{userId}
-        [Route("User/Carers/{userId}")]
-        public async Task<IHttpActionResult> RegisterCarer(string userId)
+        // POST api/User/Carers/{userId}/Add
+        [Route("User/Carers/{userId}/Add")]
+        public async Task<IHttpActionResult> AddCarer(string userId)
         {
             var user = manager.FindById(User.Identity.GetUserId());
             var carer = manager.FindById(userId);
@@ -81,6 +81,29 @@ namespace SilverLinkAPI.Controllers
             }
 
             ((CarerUser)carer).Care = ((SilverUser)user);
+
+            await manager.UpdateAsync(carer);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // POST api/User/Carers/{userId}/Remove
+        [Route("User/Carers/{userId}/Remove")]
+        public async Task<IHttpActionResult> RemoveCarer(string userId)
+        {
+            var carer = manager.FindById(userId);
+
+            string user = User.Identity.GetUserId();
+
+            var existing = db.CarerUsers
+              .Where(u => u.Id == userId && u.Care.Id == user)
+              .FirstOrDefault();
+
+            if (existing == null)
+                return BadRequest();
+
+            ((CarerUser)carer).Care = null;
 
             await manager.UpdateAsync(carer);
             await db.SaveChangesAsync();
