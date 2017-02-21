@@ -31,7 +31,7 @@ namespace SilverLinkAPI.Controllers
 
 
         // GET: api/Friends
-        public IEnumerable<Friend> GetFriends()
+        public IEnumerable<Friend> GetFriends(Boolean recent)
         {
             string user = User.Identity.GetUserId();
 
@@ -41,7 +41,6 @@ namespace SilverLinkAPI.Controllers
                            .Where(f => f.AcceptedAt != null)
                            .Include(f => f.User)
                            .Include(f => f.UserFriend)
-                           .Include(f => f.Messages.LastOrDefault())
                            .ToList();
 
             foreach (Friend f in friends)
@@ -50,9 +49,21 @@ namespace SilverLinkAPI.Controllers
                 {
                     f.User = f.UserFriend;
                 }
+                db.Entry(f)
+                    .Collection(g => g.Messages)
+                    .Query().OrderByDescending(m => m.SentAt).Take(1)
+                    .Load();
             }
 
-            return friends;
+            List<Friend> sortedFriends;
+
+            if (recent)
+                sortedFriends = friends.OrderByDescending(f => f.Messages).ToList();
+            else
+                sortedFriends = friends.OrderBy(f => f.User.FullName).ToList();
+
+
+            return sortedFriends;
         }
 
         // GET api/Friends/Requests

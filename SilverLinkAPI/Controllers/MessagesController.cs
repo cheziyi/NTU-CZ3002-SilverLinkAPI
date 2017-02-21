@@ -36,6 +36,7 @@ namespace SilverLinkAPI.Controllers
                          .Where(m => m.GroupId == groupId)
                          .Where(m => m.SentAt > since)
                          .Include(m => m.SentBy)
+                         .OrderBy(m => m.Id)
                          .ToList();
 
             return messages;
@@ -51,6 +52,7 @@ namespace SilverLinkAPI.Controllers
                          .Where(m => m.FriendId == friendId)
                          .Where(m => m.SentAt > since)
                          .Include(m => m.SentBy)
+                         .OrderBy(m => m.Id)
                          .ToList();
 
             return messages;
