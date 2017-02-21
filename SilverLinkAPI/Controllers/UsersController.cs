@@ -4,6 +4,7 @@ using SilverLinkAPI.DAL;
 using SilverLinkAPI.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -14,7 +15,7 @@ using System.Web.Http.Description;
 namespace SilverLinkAPI.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Users")]
+    [RoutePrefix("api")]
     public class UsersController : ApiController
     {
         private ApplicationDbContext db;
@@ -27,7 +28,7 @@ namespace SilverLinkAPI.Controllers
         }
 
         // GET: api/Users/{phoneNo}
-        [Route("{phoneNo}")]
+        [Route("Users/{phoneNo}")]
         [ResponseType(typeof(ApplicationUser))]
         public async Task<IHttpActionResult> GetUser(string phoneNo)
         {
@@ -40,7 +41,8 @@ namespace SilverLinkAPI.Controllers
             return Ok(user);
         }
 
-        // PUT: api/Users
+        // PUT: api/User
+        [Route("User")]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutUser(ApplicationUser user)
         {
@@ -66,31 +68,38 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        // POST api/Users/{userId}/RegisterCarer
-        [Route("{userId}/RegisterCarer")]
+        // POST api/User/Carers/{userId}
+        [Route("User/Carers/{userId}")]
         public async Task<IHttpActionResult> RegisterCarer(string userId)
         {
             var user = manager.FindById(User.Identity.GetUserId());
             var carer = manager.FindById(userId);
-            
+
             if (user.Role != UserRole.Silver || carer.Role != UserRole.Carer)
             {
                 return BadRequest();
             }
 
-            if (((SilverUser)user).Carers == null)
-            {
-                ((SilverUser)user).Carers = new List<CarerUser>();
-            }
+            ((CarerUser)carer).Care = ((SilverUser)user);
 
-            ((SilverUser)user).Carers.Add((CarerUser)carer);
-
-            await manager.UpdateAsync(user);
+            await manager.UpdateAsync(carer);
             await db.SaveChangesAsync();
 
             return Ok();
         }
 
+        // GET: api/User/Carers
+        [Route("User/Carers")]
+        public IEnumerable<CarerUser> GetCarers()
+        {
+            string userId = User.Identity.GetUserId();
+            var user = db.SilverUsers
+                          .Where(u => u.Id == userId)
+                          .Include(u => u.Carers)
+                          .FirstOrDefault();
+
+            return user.Carers.ToList();
+        }
 
     }
 }
