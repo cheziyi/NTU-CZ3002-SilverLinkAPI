@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -54,16 +55,35 @@ namespace SilverLinkAPI.Controllers
         {
             var user = manager.FindById(User.Identity.GetUserId());
 
-            var group = db.Groups.SingleOrDefault(g => g.Id == groupId);
+            var group = db.Groups
+                   .Where(g => g.Id == groupId)
+                   .Include(g => g.Members)
+                   .FirstOrDefault();
 
-            if (((SilverUser)user).Groups == null)
-            {
-                ((SilverUser)user).Groups = new List<Group>();
-            }
+            group.Members.Add((SilverUser)user);
 
-            ((SilverUser)user).Groups.Add(group);
+            db.Entry(group).State = EntityState.Modified;
 
-            await manager.UpdateAsync(user);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // POST: api/Groups/{groupId}/Unstar
+        [Route("{groupId}/Unstar")]
+        public async Task<IHttpActionResult> UnstarGroup(int groupId)
+        {
+            var user = manager.FindById(User.Identity.GetUserId());
+
+            var group = db.Groups
+                   .Where(g => g.Id == groupId)
+                   .Include(g => g.Members)
+                   .FirstOrDefault();
+
+            group.Members.Remove((SilverUser)user);
+
+            db.Entry(group).State = EntityState.Modified;
+
             await db.SaveChangesAsync();
 
             return Ok();
