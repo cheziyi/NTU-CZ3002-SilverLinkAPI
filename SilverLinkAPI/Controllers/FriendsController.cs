@@ -31,6 +31,11 @@ namespace SilverLinkAPI.Controllers
 
 
         // GET: api/Friends
+        public IEnumerable<Friend> GetFriends()
+        {
+            return GetFriends(false);
+        }
+
         public IEnumerable<Friend> GetFriends(Boolean recent)
         {
             string user = User.Identity.GetUserId();
