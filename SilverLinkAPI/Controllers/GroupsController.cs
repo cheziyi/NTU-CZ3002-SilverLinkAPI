@@ -48,8 +48,8 @@ namespace SilverLinkAPI.Controllers
             return groups;
         }
 
-        // POST api/Groups/StarGroup
-        [Route("StarGroup")]
+        // POST api/Groups/{groupId}/Star
+        [Route("{groupId}/Star")]
         public async Task<IHttpActionResult> StarGroup(int groupId)
         {
             var user = manager.FindById(User.Identity.GetUserId());

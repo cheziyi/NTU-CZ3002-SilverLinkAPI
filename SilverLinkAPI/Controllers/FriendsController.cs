@@ -70,8 +70,8 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        // POST api/Friends/AddFriend
-        [Route("AddFriend")]
+        // POST api/Friends/{userId}/Add
+        [Route("{userId}/Add")]
         public async Task<IHttpActionResult> AddFriend(string userId)
         {
 
@@ -84,8 +84,8 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        // POST api/Friends/AcceptRequest
-        [Route("AcceptRequest")]
+        // POST api/Friends/Requests/{friendId}/Accept
+        [Route("Requests/{friendId}/Accept")]
         public async Task<IHttpActionResult> AcceptRequest(int friendId)
         {
             var result = db.Friends.SingleOrDefault(f => f.Id == friendId);

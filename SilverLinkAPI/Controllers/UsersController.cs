@@ -26,7 +26,8 @@ namespace SilverLinkAPI.Controllers
             manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
         }
 
-        // GET: api/Users/5
+        // GET: api/Users/{phoneNo}
+        [Route("{phoneNo}")]
         [ResponseType(typeof(ApplicationUser))]
         public async Task<IHttpActionResult> GetUser(string phoneNo)
         {
@@ -65,8 +66,8 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        // POST api/Users/RegisterCarer
-        [Route("RegisterCarer")]
+        // POST api/Users/{userId}/RegisterCarer
+        [Route("{userId}/RegisterCarer")]
         public async Task<IHttpActionResult> RegisterCarer(string userId)
         {
             var user = manager.FindById(User.Identity.GetUserId());

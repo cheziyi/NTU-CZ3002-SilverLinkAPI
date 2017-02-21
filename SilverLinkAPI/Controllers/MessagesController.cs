@@ -13,7 +13,7 @@ using System.Web.Http;
 namespace SilverLinkAPI.Controllers
 {
     [Authorize]
-    [RoutePrefix("api/Messages")]
+    [RoutePrefix("api")]
     public class MessagesController : ApiController
     {
 
@@ -26,8 +26,8 @@ namespace SilverLinkAPI.Controllers
             manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
         }
 
-        // GET api/Messages/GroupMessages
-        [Route("GroupMessages")]
+        // GET api/Groups/{groupId}/Messages/{since}
+        [Route("Groups/{groupId}/Messages/{since}")]
         public IEnumerable<Message> GetGroupMessages(int groupId, DateTime since)
         {
 
@@ -41,8 +41,8 @@ namespace SilverLinkAPI.Controllers
             return messages;
         }
 
-        // GET api/Messages/FriendMessages
-        [Route("FriendMessages")]
+        // GET api/Friends/{friendId}/Messages/{since}
+        [Route("Friends/{friendId}/Messages/{since}")]
         public IEnumerable<Message> GetFriendMessages(int friendId, DateTime since)
         {
 
@@ -56,8 +56,8 @@ namespace SilverLinkAPI.Controllers
             return messages;
         }
 
-        // POST api/Messages/SendGroupMessage
-        [Route("SendGroupMessage")]
+        // POST api/Groups/{groupId}/Messages
+        [Route("Groups/{groupId}/Messages")]
         public async Task<IHttpActionResult> SendGroupMessage(int groupId, Message message)
         {
             GroupMessage msg = (GroupMessage)message;
@@ -69,8 +69,8 @@ namespace SilverLinkAPI.Controllers
             return Ok();
         }
 
-        // POST api/Messages/SendFriendMessage
-        [Route("SendFriendMessage")]
+        // POST api/Friends/{friendId}/Messages
+        [Route("Friends/{friendId}/Messages")]
         public async Task<IHttpActionResult> SendFriendMessage(int friendId, Message message)
         {
             FriendMessage msg = (FriendMessage)message;
