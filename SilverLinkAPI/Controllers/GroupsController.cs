@@ -31,8 +31,36 @@ namespace SilverLinkAPI.Controllers
         public IEnumerable<Group> GetGroups()
         {
             var groups = db.Groups.ToList();
+
+            foreach (Group group in groups)
+            {
+                db.Entry(group)
+                    .Collection(g => g.Messages)
+                    .Query().OrderByDescending(m => m.SentAt).Take(1)
+                    .Load();
+            }
             return groups;
         }
+
+
+        // GET: api/Groups/{groupId}
+        [Route("{groupId}")]
+        [ResponseType(typeof(Group))]
+        public async Task<IHttpActionResult> GetGroup(int groupId)
+        {
+            var group = await db.Groups
+                      .Where(g => g.Id == groupId)
+                      .Include(g => g.Members)
+                      .FirstOrDefaultAsync();
+
+            await db.Entry(group)
+                   .Collection(g => g.Messages)
+                   .Query().OrderByDescending(m => m.SentAt).Take(1)
+                   .LoadAsync();
+
+            return Ok(group);
+        }
+
 
         // GET api/Groups/Starred
         [Route("Starred")]

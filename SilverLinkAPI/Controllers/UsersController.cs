@@ -41,6 +41,7 @@ namespace SilverLinkAPI.Controllers
             return Ok(user);
         }
 
+
         // PUT: api/User
         [Route("User")]
         [ResponseType(typeof(void))]
@@ -122,6 +123,71 @@ namespace SilverLinkAPI.Controllers
                           .FirstOrDefault();
 
             return user.Carers.ToList();
+        }
+
+        // POST api/User/DeviceId
+        [Route("User/DeviceId")]
+        public async Task<IHttpActionResult> UpdateDeviceId([FromBody] string deviceId)
+        {
+            var user = manager.FindById(User.Identity.GetUserId());
+            user.DeviceId = deviceId;
+
+            await manager.UpdateAsync(user);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        // POST api/User/Location
+        [Route("User/Location")]
+        public async Task<IHttpActionResult> UpdateLocation(Location location)
+        {
+            var user = manager.FindById(User.Identity.GetUserId());
+            ((SilverUser)user).Location = location;
+
+            await manager.UpdateAsync(user);
+            await db.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
+        // POST api/User/PanicEvents
+        [Route("User/PanicEvents")]
+        public async Task<IHttpActionResult> AddPanicEvent(PanicEvent panic)
+        {
+            var user = manager.FindById(User.Identity.GetUserId());
+
+            if (user.Role != UserRole.Silver)
+            {
+                return BadRequest();
+            }
+            panic.User = (SilverUser)user;
+
+            db.PanicEvents.Add(panic);
+            await db.SaveChangesAsync();
+
+            foreach (var carer in GetCarers())
+            {
+                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", panic);
+            }
+
+            return Ok();
+        }
+
+        // GET: api/Users/{userId}/Location
+        [Route("Users/{userId}/Location")]
+        [ResponseType(typeof(Location))]
+        public async Task<IHttpActionResult> GetUserLocation(string userId)
+        {
+            var user = await db.SilverUsers
+                       .Where(u => u.Id == userId)
+                       .Include(u => u.Location)
+                       .FirstOrDefaultAsync();
+
+            FirebaseController.Notify(user, "Location Request", "", null);
+
+            return Ok(user.Location);
         }
 
     }

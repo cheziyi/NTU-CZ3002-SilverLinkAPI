@@ -29,12 +29,38 @@ namespace SilverLinkAPI.Controllers
             manager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
         }
 
+        // GET: api/Friends/{friendId}
+        [Route("{friendId}")]
+        [ResponseType(typeof(Friend))]
+        public async Task<IHttpActionResult> GetFriend(int friendId)
+        {
+            string user = User.Identity.GetUserId();
+
+            var friend = await db.Friends
+                      .Where(f => f.Id == friendId)
+                      .Include(f => f.User)
+                      .Include(f => f.UserFriend)
+                      .FirstOrDefaultAsync();
+
+            if (friend.UserId1 == user)
+            {
+                friend.User = friend.UserFriend;
+            }
+
+            await db.Entry(friend)
+               .Collection(f => f.Messages)
+               .Query().OrderByDescending(m => m.SentAt).Take(1)
+               .LoadAsync();
+
+            return Ok(friend);
+        }
 
         // GET: api/Friends
         public IEnumerable<Friend> GetFriends()
         {
             return GetFriends(false);
         }
+
 
         public IEnumerable<Friend> GetFriends(Boolean recent)
         {

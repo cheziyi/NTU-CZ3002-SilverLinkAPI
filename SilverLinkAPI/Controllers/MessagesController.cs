@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using SilverLinkAPI.DAL;
 using SilverLinkAPI.Models;
 using System;
@@ -68,6 +69,19 @@ namespace SilverLinkAPI.Controllers
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
 
+            var group = await db.Groups
+              .Where(g => g.Id == groupId)
+              .Include(g => g.Members)
+              .FirstOrDefaultAsync();
+
+            message.MessageData = null;
+
+            foreach (var member in group.Members)
+            {
+                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, message);
+            }
+
+
             return Ok();
         }
 
@@ -80,6 +94,25 @@ namespace SilverLinkAPI.Controllers
 
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
+
+
+            var user = manager.FindById(User.Identity.GetUserId());
+
+            var friend = await db.Friends
+                   .Where(f => f.Id == friendId)
+                   .Include(f => f.User)
+                   .Include(f => f.UserFriend)
+                   .FirstOrDefaultAsync();
+
+            if (friend.UserId1 == user.Id)
+            {
+                friend.User = friend.UserFriend;
+            }
+
+            message.MessageData = null;
+
+            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, message);
+
 
             return Ok();
         }
