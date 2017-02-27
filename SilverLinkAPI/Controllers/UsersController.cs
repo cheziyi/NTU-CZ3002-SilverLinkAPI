@@ -45,7 +45,7 @@ namespace SilverLinkAPI.Controllers
         // PUT: api/User
         [Route("User")]
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutUser(ApplicationUser user)
+        public async Task<IHttpActionResult> UpdateUser(ApplicationUser user)
         {
             if (!ModelState.IsValid)
             {
