@@ -78,7 +78,7 @@ namespace SilverLinkAPI.Controllers
 
             foreach (var member in group.Members)
             {
-                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, message);
+                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, MessageType.GroupMessage, groupId);
             }
 
 
@@ -111,7 +111,7 @@ namespace SilverLinkAPI.Controllers
 
             message.MessageData = null;
 
-            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, message);
+            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, MessageType.FriendMessage, friendId);
 
 
             return Ok();

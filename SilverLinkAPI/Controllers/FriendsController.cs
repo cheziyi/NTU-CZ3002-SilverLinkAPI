@@ -117,20 +117,25 @@ namespace SilverLinkAPI.Controllers
         [Route("{userId}/Add")]
         public async Task<IHttpActionResult> AddFriend(string userId)
         {
-            string user = User.Identity.GetUserId();
+            ApplicationUser user = manager.FindById(User.Identity.GetUserId());
+            ApplicationUser friend = manager.FindById(userId);
 
-            var friend = db.Friends
-                           .Where(f => (f.UserId1 == user && f.UserId2 == userId)
-                           || (f.UserId1 == userId && f.UserId2 == user))
+            var existingFriend = db.Friends
+                           .Where(f => (f.UserId1 == user.Id && f.UserId2 == userId)
+                           || (f.UserId1 == userId && f.UserId2 == user.Id))
                            .FirstOrDefault();
 
-            if (friend != null)
+            if (existingFriend != null)
                 return BadRequest();
 
-            friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.UtcNow };
+            //friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.UtcNow };
+            // Do not require accepting friend
+            var newFriend = new Friend { UserId1 = user.Id, UserId2 = userId, RequestedAt = DateTime.UtcNow, AcceptedAt = DateTime.UtcNow };
 
-            db.Friends.Add(friend);
+            db.Friends.Add(newFriend);
             await db.SaveChangesAsync();
+
+            FirebaseController.Notify(friend, user.FullName + " added you as a friend!", "", MessageType.FriendAdded, 0);
 
             return Ok();
         }

@@ -224,6 +224,10 @@
     <Compile Include="Migrations\201702251850548_AddLinks.Designer.cs">
       <DependentUpon>201702251850548_AddLinks.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201702281928588_LatLonDouble.cs" />
+    <Compile Include="Migrations\201702281928588_LatLonDouble.Designer.cs">
+      <DependentUpon>201702281928588_LatLonDouble.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -323,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702251850548_AddLinks.resx">
       <DependentUpon>201702251850548_AddLinks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702281928588_LatLonDouble.resx">
+      <DependentUpon>201702281928588_LatLonDouble.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

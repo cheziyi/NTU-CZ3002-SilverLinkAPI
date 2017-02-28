@@ -143,6 +143,7 @@ namespace SilverLinkAPI.Controllers
         public async Task<IHttpActionResult> UpdateLocation(Location location)
         {
             var user = manager.FindById(User.Identity.GetUserId());
+            location.AcquiredAt = DateTime.UtcNow;
             ((SilverUser)user).Location = location;
 
             await manager.UpdateAsync(user);
@@ -169,7 +170,7 @@ namespace SilverLinkAPI.Controllers
 
             foreach (var carer in GetCarers())
             {
-                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", panic);
+                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", MessageType.PanicEvent, 0);
             }
 
             return Ok();
@@ -185,7 +186,7 @@ namespace SilverLinkAPI.Controllers
                        .Include(u => u.Location)
                        .FirstOrDefaultAsync();
 
-            FirebaseController.Notify(user, "Location Request", "", null);
+            //FirebaseController.Notify(user, "Location Request", "", MessageType.LocationRequest, 0);
 
             return Ok(user.Location);
         }
