@@ -128,9 +128,9 @@ namespace SilverLinkAPI.Controllers
             if (existingFriend != null)
                 return BadRequest();
 
-            //friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.UtcNow };
+            //friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.Now };
             // Do not require accepting friend
-            var newFriend = new Friend { UserId1 = user.Id, UserId2 = userId, RequestedAt = DateTime.UtcNow, AcceptedAt = DateTime.UtcNow };
+            var newFriend = new Friend { UserId1 = user.Id, UserId2 = userId, RequestedAt = DateTime.Now, AcceptedAt = DateTime.Now };
 
             db.Friends.Add(newFriend);
             await db.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace SilverLinkAPI.Controllers
                 if (result.UserId2 != User.Identity.GetUserId() || result.AcceptedAt != null)
                     return BadRequest();
 
-                result.AcceptedAt = DateTime.UtcNow;
+                result.AcceptedAt = DateTime.Now;
                 await db.SaveChangesAsync();
             }
 

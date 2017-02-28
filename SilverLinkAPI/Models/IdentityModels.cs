@@ -53,6 +53,7 @@ namespace SilverLinkAPI.Models
     public class SilverUser : ApplicationUser
     {
         public virtual ICollection<Group> Groups { get; set; }
+        [DataMember]
         public virtual Location Location { get; set; }
         public virtual ICollection<CarerUser> Carers { get; set; }
         public virtual ICollection<PanicEvent> PanicEvents { get; set; }

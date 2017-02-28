@@ -143,7 +143,7 @@ namespace SilverLinkAPI.Controllers
         public async Task<IHttpActionResult> UpdateLocation(Location location)
         {
             var user = manager.FindById(User.Identity.GetUserId());
-            location.AcquiredAt = DateTime.UtcNow;
+            location.AcquiredAt = DateTime.Now;
             ((SilverUser)user).Location = location;
 
             await manager.UpdateAsync(user);
@@ -191,5 +191,20 @@ namespace SilverLinkAPI.Controllers
             return Ok(user.Location);
         }
 
+
+        // GET: api/User/Care
+        [Route("User/Care")]
+        [ResponseType(typeof(SilverUser))]
+        public async Task<IHttpActionResult> GetCare()
+        {
+            string userId = User.Identity.GetUserId();
+
+            var user = await db.CarerUsers
+                       .Where(u => u.Id == userId)
+                       .Include(u => u.Care.Location)
+                       .FirstOrDefaultAsync();
+
+            return Ok(user.Care);
+        }
     }
 }

@@ -26,6 +26,8 @@ namespace SilverLinkAPI
             var settings = jsonFormatter.SerializerSettings;
             settings.Formatting = Formatting.Indented;
             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            settings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
         }
     }
 }
