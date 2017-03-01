@@ -18,8 +18,11 @@ namespace SilverLinkAPI.Controllers
         /// <param name="title">Title of notification</param>
         /// <param name="body">Content of notification</param>
         /// <returns>A bool true or false to indicate status of notification</returns>
-        public static bool Notify(ApplicationUser user, string title, string body, MessageType type, int id)
+        public static bool Notify(ApplicationUser user, string title, string body, FCMType type, int id)
         {
+            if (user.DeviceId == null)
+                return false;
+
             // Build Json message object to send to FCM server
             var message = JsonConvert.SerializeObject(new
             {
@@ -49,7 +52,7 @@ namespace SilverLinkAPI.Controllers
         }
     }
 
-    public enum MessageType
+    public enum FCMType
     {
         LocationRequest = 0,
         FriendAdded = 1,

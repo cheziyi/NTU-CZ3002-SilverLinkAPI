@@ -135,7 +135,7 @@ namespace SilverLinkAPI.Controllers
             db.Friends.Add(newFriend);
             await db.SaveChangesAsync();
 
-            FirebaseController.Notify(friend, user.FullName + " added you as a friend!", "", MessageType.FriendAdded, 0);
+            FirebaseController.Notify(friend, user.FullName + " added you as a friend!", "", FCMType.FriendAdded, 0);
 
             return Ok();
         }

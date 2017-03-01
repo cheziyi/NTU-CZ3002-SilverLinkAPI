@@ -63,8 +63,14 @@ namespace SilverLinkAPI.Controllers
         [Route("Groups/{groupId}/Messages")]
         public async Task<IHttpActionResult> SendGroupMessage(int groupId, Message message)
         {
-            GroupMessage msg = (GroupMessage)message;
+            var user = manager.FindById(User.Identity.GetUserId());
+
+            GroupMessage msg = new GroupMessage();
             msg.GroupId = groupId;
+            msg.SentBy = (SilverUser)user;
+            msg.SentAt = DateTime.Now;
+            msg.MessageData = message.MessageData;
+            msg.Type = MessageType.Voice;
 
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
@@ -78,7 +84,7 @@ namespace SilverLinkAPI.Controllers
 
             foreach (var member in group.Members)
             {
-                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, MessageType.GroupMessage, groupId);
+                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, FCMType.GroupMessage, groupId);
             }
 
 
@@ -89,14 +95,18 @@ namespace SilverLinkAPI.Controllers
         [Route("Friends/{friendId}/Messages")]
         public async Task<IHttpActionResult> SendFriendMessage(int friendId, Message message)
         {
-            FriendMessage msg = (FriendMessage)message;
+
+            var user = manager.FindById(User.Identity.GetUserId());
+
+            FriendMessage msg = new FriendMessage();
+            msg.SentBy = (SilverUser)user;
+            msg.SentAt = DateTime.Now;
             msg.FriendId = friendId;
+            msg.MessageData = message.MessageData;
+            msg.Type = MessageType.Voice;
 
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
-
-
-            var user = manager.FindById(User.Identity.GetUserId());
 
             var friend = await db.Friends
                    .Where(f => f.Id == friendId)
@@ -111,7 +121,7 @@ namespace SilverLinkAPI.Controllers
 
             message.MessageData = null;
 
-            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, MessageType.FriendMessage, friendId);
+            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, FCMType.FriendMessage, friendId);
 
 
             return Ok();

@@ -30,15 +30,10 @@ namespace SilverLinkAPI.Controllers
         // GET: api/Groups
         public IEnumerable<Group> GetGroups()
         {
-            var groups = db.Groups.ToList();
+            var groups = db.Groups
+                    .OrderBy(g=>g.Name)
+                    .ToList();
 
-            foreach (Group group in groups)
-            {
-                db.Entry(group)
-                    .Collection(g => g.Messages)
-                    .Query().OrderByDescending(m => m.SentAt).Take(1)
-                    .Load();
-            }
             return groups;
         }
 
@@ -72,7 +67,16 @@ namespace SilverLinkAPI.Controllers
                          .Where(g => g.Members.Any
                          (f => f.Id == user))
                          .Include(g => g.Members)
+                         .OrderBy(g => g.Name)
                          .ToList();
+
+            foreach (Group group in groups)
+            {
+                db.Entry(group)
+                    .Collection(g => g.Messages)
+                    .Query().OrderByDescending(m => m.SentAt).Take(1)
+                    .Load();
+            }
 
             return groups;
         }

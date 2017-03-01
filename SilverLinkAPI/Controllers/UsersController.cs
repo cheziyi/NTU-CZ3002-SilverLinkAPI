@@ -170,7 +170,7 @@ namespace SilverLinkAPI.Controllers
 
             foreach (var carer in GetCarers())
             {
-                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", MessageType.PanicEvent, 0);
+                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", FCMType.PanicEvent, 0);
             }
 
             return Ok();
