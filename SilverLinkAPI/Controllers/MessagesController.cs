@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using SilverLinkAPI.DAL;
-using SilverLinkAPI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using SilverLinkAPI.DAL;
+using SilverLinkAPI.Models;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -17,9 +15,8 @@ namespace SilverLinkAPI.Controllers
     [RoutePrefix("api")]
     public class MessagesController : ApiController
     {
-
-        private ApplicationDbContext db;
-        private ApplicationUserManager manager;
+        private readonly ApplicationDbContext db;
+        private readonly ApplicationUserManager manager;
 
         public MessagesController()
         {
@@ -31,14 +28,13 @@ namespace SilverLinkAPI.Controllers
         [Route("Groups/{groupId}/Messages/{since}")]
         public IEnumerable<Message> GetGroupMessages(int groupId, DateTime since)
         {
-
             var messages = db.Messages
-                         .OfType<GroupMessage>()
-                         .Where(m => m.GroupId == groupId)
-                         .Where(m => m.SentAt > since)
-                         .Include(m => m.SentBy)
-                         .OrderBy(m => m.Id)
-                         .ToList();
+                .OfType<GroupMessage>()
+                .Where(m => m.GroupId == groupId)
+                .Where(m => m.SentAt > since)
+                .Include(m => m.SentBy)
+                .OrderBy(m => m.Id)
+                .ToList();
 
             return messages;
         }
@@ -47,14 +43,13 @@ namespace SilverLinkAPI.Controllers
         [Route("Friends/{friendId}/Messages/{since}")]
         public IEnumerable<Message> GetFriendMessages(int friendId, DateTime since)
         {
-
             var messages = db.Messages
-                         .OfType<FriendMessage>()
-                         .Where(m => m.FriendId == friendId)
-                         .Where(m => m.SentAt > since)
-                         .Include(m => m.SentBy)
-                         .OrderBy(m => m.Id)
-                         .ToList();
+                .OfType<FriendMessage>()
+                .Where(m => m.FriendId == friendId)
+                .Where(m => m.SentAt > since)
+                .Include(m => m.SentBy)
+                .OrderBy(m => m.Id)
+                .ToList();
 
             return messages;
         }
@@ -65,9 +60,9 @@ namespace SilverLinkAPI.Controllers
         {
             var user = manager.FindById(User.Identity.GetUserId());
 
-            GroupMessage msg = new GroupMessage();
+            var msg = new GroupMessage();
             msg.GroupId = groupId;
-            msg.SentBy = (SilverUser)user;
+            msg.SentBy = (SilverUser) user;
             msg.SentAt = DateTime.Now;
             msg.MessageData = message.MessageData;
             msg.Type = MessageType.Voice;
@@ -76,16 +71,15 @@ namespace SilverLinkAPI.Controllers
             await db.SaveChangesAsync();
 
             var group = await db.Groups
-              .Where(g => g.Id == groupId)
-              .Include(g => g.Members)
-              .FirstOrDefaultAsync();
+                .Where(g => g.Id == groupId)
+                .Include(g => g.Members)
+                .FirstOrDefaultAsync();
 
             message.MessageData = null;
 
             foreach (var member in group.Members)
-            {
-                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText, FCMType.GroupMessage, groupId);
-            }
+                FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText,
+                    FCMType.GroupMessage, groupId);
 
 
             return Ok();
@@ -95,11 +89,10 @@ namespace SilverLinkAPI.Controllers
         [Route("Friends/{friendId}/Messages")]
         public async Task<IHttpActionResult> SendFriendMessage(int friendId, Message message)
         {
-
             var user = manager.FindById(User.Identity.GetUserId());
 
-            FriendMessage msg = new FriendMessage();
-            msg.SentBy = (SilverUser)user;
+            var msg = new FriendMessage();
+            msg.SentBy = (SilverUser) user;
             msg.SentAt = DateTime.Now;
             msg.FriendId = friendId;
             msg.MessageData = message.MessageData;
@@ -109,19 +102,18 @@ namespace SilverLinkAPI.Controllers
             await db.SaveChangesAsync();
 
             var friend = await db.Friends
-                   .Where(f => f.Id == friendId)
-                   .Include(f => f.User)
-                   .Include(f => f.UserFriend)
-                   .FirstOrDefaultAsync();
+                .Where(f => f.Id == friendId)
+                .Include(f => f.User)
+                .Include(f => f.UserFriend)
+                .FirstOrDefaultAsync();
 
             if (friend.UserId1 == user.Id)
-            {
                 friend.User = friend.UserFriend;
-            }
 
             message.MessageData = null;
 
-            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText, FCMType.FriendMessage, friendId);
+            FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText,
+                FCMType.FriendMessage, friendId);
 
 
             return Ok();

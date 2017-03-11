@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Web;
 
 namespace SilverLinkAPI.Models
 {
@@ -12,15 +9,21 @@ namespace SilverLinkAPI.Models
     {
         [DataMember]
         public int Id { get; set; }
+
         [DataMember]
         public string MessageText { get; set; }
+
         [DataMember]
         public byte[] MessageData { get; set; }
+
         [DataMember]
         public MessageType Type { get; set; }
+
         [DataMember]
         public DateTime SentAt { get; set; }
+
         public string SilverUserId { get; set; }
+
         [DataMember]
         public virtual SilverUser SentBy { get; set; }
     }

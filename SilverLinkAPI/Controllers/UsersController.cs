@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using SilverLinkAPI.DAL;
-using SilverLinkAPI.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using SilverLinkAPI.DAL;
+using SilverLinkAPI.Models;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -18,8 +17,8 @@ namespace SilverLinkAPI.Controllers
     [RoutePrefix("api")]
     public class UsersController : ApiController
     {
-        private ApplicationDbContext db;
-        private ApplicationUserManager manager;
+        private readonly ApplicationDbContext db;
+        private readonly ApplicationUserManager manager;
 
         public UsersController()
         {
@@ -34,9 +33,7 @@ namespace SilverLinkAPI.Controllers
         {
             var user = await manager.FindByNameAsync(phoneNo);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return Ok(user);
         }
@@ -48,14 +45,10 @@ namespace SilverLinkAPI.Controllers
         public async Task<IHttpActionResult> UpdateUser(ApplicationUser user)
         {
             if (!ModelState.IsValid)
-            {
                 return BadRequest(ModelState);
-            }
 
             if (User.Identity.GetUserId() != user.Id)
-            {
                 return BadRequest();
-            }
 
             var origUser = manager.FindById(User.Identity.GetUserId());
 
@@ -77,11 +70,9 @@ namespace SilverLinkAPI.Controllers
             var carer = manager.FindById(userId);
 
             if (user.Role != UserRole.Silver || carer.Role != UserRole.Carer)
-            {
                 return BadRequest();
-            }
 
-            ((CarerUser)carer).Care = ((SilverUser)user);
+            ((CarerUser) carer).Care = (SilverUser) user;
 
             await manager.UpdateAsync(carer);
             await db.SaveChangesAsync();
@@ -95,16 +86,16 @@ namespace SilverLinkAPI.Controllers
         {
             var carer = manager.FindById(userId);
 
-            string user = User.Identity.GetUserId();
+            var user = User.Identity.GetUserId();
 
             var existing = db.CarerUsers
-              .Where(u => u.Id == userId && u.Care.Id == user)
-              .FirstOrDefault();
+                .Where(u => u.Id == userId && u.Care.Id == user)
+                .FirstOrDefault();
 
             if (existing == null)
                 return BadRequest();
 
-            ((CarerUser)carer).Care = null;
+            ((CarerUser) carer).Care = null;
 
             await manager.UpdateAsync(carer);
             await db.SaveChangesAsync();
@@ -116,11 +107,11 @@ namespace SilverLinkAPI.Controllers
         [Route("User/Carers")]
         public IEnumerable<CarerUser> GetCarers()
         {
-            string userId = User.Identity.GetUserId();
+            var userId = User.Identity.GetUserId();
             var user = db.SilverUsers
-                          .Where(u => u.Id == userId)
-                          .Include(u => u.Carers)
-                          .FirstOrDefault();
+                .Where(u => u.Id == userId)
+                .Include(u => u.Carers)
+                .FirstOrDefault();
 
             return user.Carers.ToList();
         }
@@ -144,7 +135,7 @@ namespace SilverLinkAPI.Controllers
         {
             var user = manager.FindById(User.Identity.GetUserId());
             location.AcquiredAt = DateTime.Now;
-            ((SilverUser)user).Location = location;
+            ((SilverUser) user).Location = location;
 
             await manager.UpdateAsync(user);
             await db.SaveChangesAsync();
@@ -160,18 +151,15 @@ namespace SilverLinkAPI.Controllers
             var user = manager.FindById(User.Identity.GetUserId());
 
             if (user.Role != UserRole.Silver)
-            {
                 return BadRequest();
-            }
-            panic.User = (SilverUser)user;
+            panic.User = (SilverUser) user;
 
             db.PanicEvents.Add(panic);
             await db.SaveChangesAsync();
 
             foreach (var carer in GetCarers())
-            {
-                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", FCMType.PanicEvent, 0);
-            }
+                FirebaseController.Notify(carer, "New panic event from " + user.FullName + "!", "", FCMType.PanicEvent,
+                    0);
 
             return Ok();
         }
@@ -182,11 +170,9 @@ namespace SilverLinkAPI.Controllers
         public async Task<IHttpActionResult> GetUserLocation(string userId)
         {
             var user = await db.SilverUsers
-                       .Where(u => u.Id == userId)
-                       .Include(u => u.Location)
-                       .FirstOrDefaultAsync();
-
-            //FirebaseController.Notify(user, "Location Request", "", MessageType.LocationRequest, 0);
+                .Where(u => u.Id == userId)
+                .Include(u => u.Location)
+                .FirstOrDefaultAsync();
 
             return Ok(user.Location);
         }
@@ -197,12 +183,12 @@ namespace SilverLinkAPI.Controllers
         [ResponseType(typeof(SilverUser))]
         public async Task<IHttpActionResult> GetCare()
         {
-            string userId = User.Identity.GetUserId();
+            var userId = User.Identity.GetUserId();
 
             var user = await db.CarerUsers
-                       .Where(u => u.Id == userId)
-                       .Include(u => u.Care.Location)
-                       .FirstOrDefaultAsync();
+                .Where(u => u.Id == userId)
+                .Include(u => u.Care.Location)
+                .FirstOrDefaultAsync();
 
             return Ok(user.Care);
         }

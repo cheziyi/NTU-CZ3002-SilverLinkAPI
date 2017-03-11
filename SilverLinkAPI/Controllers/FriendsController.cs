@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
-using SilverLinkAPI.DAL;
-using SilverLinkAPI.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using SilverLinkAPI.DAL;
+using SilverLinkAPI.Models;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -20,8 +16,8 @@ namespace SilverLinkAPI.Controllers
     [RoutePrefix("api/Friends")]
     public class FriendsController : ApiController
     {
-        private ApplicationDbContext db;
-        private ApplicationUserManager manager;
+        private readonly ApplicationDbContext db;
+        private readonly ApplicationUserManager manager;
 
         public FriendsController()
         {
@@ -34,23 +30,21 @@ namespace SilverLinkAPI.Controllers
         [ResponseType(typeof(Friend))]
         public async Task<IHttpActionResult> GetFriend(int friendId)
         {
-            string user = User.Identity.GetUserId();
+            var user = User.Identity.GetUserId();
 
             var friend = await db.Friends
-                      .Where(f => f.Id == friendId)
-                      .Include(f => f.User)
-                      .Include(f => f.UserFriend)
-                      .FirstOrDefaultAsync();
+                .Where(f => f.Id == friendId)
+                .Include(f => f.User)
+                .Include(f => f.UserFriend)
+                .FirstOrDefaultAsync();
 
             if (friend.UserId1 == user)
-            {
                 friend.User = friend.UserFriend;
-            }
 
             await db.Entry(friend)
-               .Collection(f => f.Messages)
-               .Query().OrderByDescending(m => m.SentAt).Take(1)
-               .LoadAsync();
+                .Collection(f => f.Messages)
+                .Query().OrderByDescending(m => m.SentAt).Take(1)
+                .LoadAsync();
 
             return Ok(friend);
         }
@@ -62,24 +56,22 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-        public IEnumerable<Friend> GetFriends(Boolean recent)
+        public IEnumerable<Friend> GetFriends(bool recent)
         {
-            string user = User.Identity.GetUserId();
+            var user = User.Identity.GetUserId();
 
             var friends = db.Friends
-                           .Where(f => f.UserId1 == user
-                           || f.UserId2 == user)
-                           .Where(f => f.AcceptedAt != null)
-                           .Include(f => f.User)
-                           .Include(f => f.UserFriend)
-                           .ToList();
+                .Where(f => f.UserId1 == user
+                            || f.UserId2 == user)
+                .Where(f => f.AcceptedAt != null)
+                .Include(f => f.User)
+                .Include(f => f.UserFriend)
+                .ToList();
 
-            foreach (Friend f in friends)
+            foreach (var f in friends)
             {
                 if (f.UserId1 == user)
-                {
                     f.User = f.UserFriend;
-                }
                 db.Entry(f)
                     .Collection(g => g.Messages)
                     .Query().OrderByDescending(m => m.SentAt).Take(1)
@@ -101,13 +93,13 @@ namespace SilverLinkAPI.Controllers
         [Route("Requests")]
         public IEnumerable<Friend> GetRequests()
         {
-            string user = User.Identity.GetUserId();
+            var user = User.Identity.GetUserId();
 
             var friends = db.Friends
-                         .Where(f => f.UserId2 == user)
-                         .Where(f => f.AcceptedAt == null)
-                         .Include(f => f.User)
-                         .ToList();
+                .Where(f => f.UserId2 == user)
+                .Where(f => f.AcceptedAt == null)
+                .Include(f => f.User)
+                .ToList();
 
             return friends;
         }
@@ -117,20 +109,26 @@ namespace SilverLinkAPI.Controllers
         [Route("{userId}/Add")]
         public async Task<IHttpActionResult> AddFriend(string userId)
         {
-            ApplicationUser user = manager.FindById(User.Identity.GetUserId());
-            ApplicationUser friend = manager.FindById(userId);
+            var user = manager.FindById(User.Identity.GetUserId());
+            var friend = manager.FindById(userId);
 
             var existingFriend = db.Friends
-                           .Where(f => (f.UserId1 == user.Id && f.UserId2 == userId)
-                           || (f.UserId1 == userId && f.UserId2 == user.Id))
-                           .FirstOrDefault();
+                .Where(f => f.UserId1 == user.Id && f.UserId2 == userId
+                            || f.UserId1 == userId && f.UserId2 == user.Id)
+                .FirstOrDefault();
 
             if (existingFriend != null)
                 return BadRequest();
 
             //friend = new Friend { UserId1 = user, UserId2 = userId, RequestedAt = DateTime.Now };
             // Do not require accepting friend
-            var newFriend = new Friend { UserId1 = user.Id, UserId2 = userId, RequestedAt = DateTime.Now, AcceptedAt = DateTime.Now };
+            var newFriend = new Friend
+            {
+                UserId1 = user.Id,
+                UserId2 = userId,
+                RequestedAt = DateTime.Now,
+                AcceptedAt = DateTime.Now
+            };
 
             db.Friends.Add(newFriend);
             await db.SaveChangesAsync();
@@ -159,96 +157,10 @@ namespace SilverLinkAPI.Controllers
         }
 
 
-
-
-
-
-
-        //// GET: api/Friends/5
-        //[ResponseType(typeof(Friend))]
-        //public async Task<IHttpActionResult> GetFriend(int id)
-        //{
-        //    Friend friend = await db.Friends.FindAsync(id);
-        //    if (friend == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return Ok(friend);
-        //}
-
-        //// PUT: api/Friends/5
-        //[ResponseType(typeof(void))]
-        //public async Task<IHttpActionResult> PutFriend(int id, Friend friend)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != friend.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    db.Entry(friend).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await db.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!FriendExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return StatusCode(HttpStatusCode.NoContent);
-        //}
-
-        //// POST: api/Friends
-        //[ResponseType(typeof(Friend))]
-        //public async Task<IHttpActionResult> PostFriend(Friend friend)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    db.Friends.Add(friend);
-        //    await db.SaveChangesAsync();
-
-        //    return CreatedAtRoute("DefaultApi", new { id = friend.Id }, friend);
-        //}
-
-        //// DELETE: api/Friends/5
-        //[ResponseType(typeof(Friend))]
-        //public async Task<IHttpActionResult> DeleteFriend(int id)
-        //{
-        //    Friend friend = await db.Friends.FindAsync(id);
-        //    if (friend == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    db.Friends.Remove(friend);
-        //    await db.SaveChangesAsync();
-
-        //    return Ok(friend);
-        //}
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 db.Dispose();
-            }
             base.Dispose(disposing);
         }
 

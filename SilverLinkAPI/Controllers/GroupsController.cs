@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using SilverLinkAPI.DAL;
-using SilverLinkAPI.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using SilverLinkAPI.DAL;
+using SilverLinkAPI.Models;
 
 namespace SilverLinkAPI.Controllers
 {
@@ -18,8 +15,8 @@ namespace SilverLinkAPI.Controllers
     [RoutePrefix("api/Groups")]
     public class GroupsController : ApiController
     {
-        private ApplicationDbContext db;
-        private ApplicationUserManager manager;
+        private readonly ApplicationDbContext db;
+        private readonly ApplicationUserManager manager;
 
         public GroupsController()
         {
@@ -31,8 +28,8 @@ namespace SilverLinkAPI.Controllers
         public IEnumerable<Group> GetGroups()
         {
             var groups = db.Groups
-                    .OrderBy(g=>g.Name)
-                    .ToList();
+                .OrderBy(g => g.Name)
+                .ToList();
 
             return groups;
         }
@@ -44,14 +41,14 @@ namespace SilverLinkAPI.Controllers
         public async Task<IHttpActionResult> GetGroup(int groupId)
         {
             var group = await db.Groups
-                      .Where(g => g.Id == groupId)
-                      .Include(g => g.Members)
-                      .FirstOrDefaultAsync();
+                .Where(g => g.Id == groupId)
+                .Include(g => g.Members)
+                .FirstOrDefaultAsync();
 
             await db.Entry(group)
-                   .Collection(g => g.Messages)
-                   .Query().OrderByDescending(m => m.SentAt).Take(1)
-                   .LoadAsync();
+                .Collection(g => g.Messages)
+                .Query().OrderByDescending(m => m.SentAt).Take(1)
+                .LoadAsync();
 
             return Ok(group);
         }
@@ -61,22 +58,20 @@ namespace SilverLinkAPI.Controllers
         [Route("Starred")]
         public IEnumerable<Group> GetStarredGroups()
         {
-            string user = User.Identity.GetUserId();
+            var user = User.Identity.GetUserId();
 
             var groups = db.Groups
-                         .Where(g => g.Members.Any
-                         (f => f.Id == user))
-                         .Include(g => g.Members)
-                         .OrderBy(g => g.Name)
-                         .ToList();
+                .Where(g => g.Members.Any
+                    (f => f.Id == user))
+                .Include(g => g.Members)
+                .OrderBy(g => g.Name)
+                .ToList();
 
-            foreach (Group group in groups)
-            {
+            foreach (var group in groups)
                 db.Entry(group)
                     .Collection(g => g.Messages)
                     .Query().OrderByDescending(m => m.SentAt).Take(1)
                     .Load();
-            }
 
             return groups;
         }
@@ -88,11 +83,11 @@ namespace SilverLinkAPI.Controllers
             var user = manager.FindById(User.Identity.GetUserId());
 
             var group = db.Groups
-                   .Where(g => g.Id == groupId)
-                   .Include(g => g.Members)
-                   .FirstOrDefault();
+                .Where(g => g.Id == groupId)
+                .Include(g => g.Members)
+                .FirstOrDefault();
 
-            group.Members.Add((SilverUser)user);
+            group.Members.Add((SilverUser) user);
 
             db.Entry(group).State = EntityState.Modified;
 
@@ -108,11 +103,11 @@ namespace SilverLinkAPI.Controllers
             var user = manager.FindById(User.Identity.GetUserId());
 
             var group = db.Groups
-                   .Where(g => g.Id == groupId)
-                   .Include(g => g.Members)
-                   .FirstOrDefault();
+                .Where(g => g.Id == groupId)
+                .Include(g => g.Members)
+                .FirstOrDefault();
 
-            group.Members.Remove((SilverUser)user);
+            group.Members.Remove((SilverUser) user);
 
             db.Entry(group).State = EntityState.Modified;
 
