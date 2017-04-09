@@ -228,6 +228,10 @@
     <Compile Include="Migrations\201702281928588_LatLonDouble.Designer.cs">
       <DependentUpon>201702281928588_LatLonDouble.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704091128267_UniqueGroupName.cs" />
+    <Compile Include="Migrations\201704091128267_UniqueGroupName.Designer.cs">
+      <DependentUpon>201704091128267_UniqueGroupName.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -330,6 +334,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201702281928588_LatLonDouble.resx">
       <DependentUpon>201702281928588_LatLonDouble.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704091128267_UniqueGroupName.resx">
+      <DependentUpon>201704091128267_UniqueGroupName.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
