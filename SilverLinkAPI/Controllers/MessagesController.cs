@@ -60,6 +60,7 @@ namespace SilverLinkAPI.Controllers
         {
             var user = manager.FindById(User.Identity.GetUserId());
 
+            // Add message to group
             var msg = new GroupMessage();
             msg.GroupId = groupId;
             msg.SentBy = (SilverUser) user;
@@ -70,6 +71,7 @@ namespace SilverLinkAPI.Controllers
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
 
+            // Get members from groups
             var group = await db.Groups
                 .Where(g => g.Id == groupId)
                 .Include(g => g.Members)
@@ -77,6 +79,7 @@ namespace SilverLinkAPI.Controllers
 
             message.MessageData = null;
 
+            // Send notification to group members
             foreach (var member in group.Members)
                 FirebaseController.Notify(member, "New Message from " + group.Name + "!", message.MessageText,
                     FCMType.GroupMessage, groupId);
@@ -91,6 +94,7 @@ namespace SilverLinkAPI.Controllers
         {
             var user = manager.FindById(User.Identity.GetUserId());
 
+            // Add message to friend
             var msg = new FriendMessage();
             msg.SentBy = (SilverUser) user;
             msg.SentAt = DateTime.Now;
@@ -101,6 +105,7 @@ namespace SilverLinkAPI.Controllers
             db.Messages.Add(msg);
             await db.SaveChangesAsync();
 
+            // Get friend user
             var friend = await db.Friends
                 .Where(f => f.Id == friendId)
                 .Include(f => f.User)
@@ -112,6 +117,7 @@ namespace SilverLinkAPI.Controllers
 
             message.MessageData = null;
 
+            // Send notification to friend
             FirebaseController.Notify(friend.User, "New Message from " + user.FullName + "!", message.MessageText,
                 FCMType.FriendMessage, friendId);
 

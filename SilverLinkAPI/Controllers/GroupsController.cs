@@ -60,6 +60,7 @@ namespace SilverLinkAPI.Controllers
         {
             var user = User.Identity.GetUserId();
 
+            // Get groups where user has added
             var groups = db.Groups
                 .Where(g => g.Members.Any
                     (f => f.Id == user))
@@ -67,6 +68,7 @@ namespace SilverLinkAPI.Controllers
                 .OrderBy(g => g.Name)
                 .ToList();
 
+            // Sort
             foreach (var group in groups)
                 db.Entry(group)
                     .Collection(g => g.Messages)
@@ -87,6 +89,7 @@ namespace SilverLinkAPI.Controllers
                 .Include(g => g.Members)
                 .FirstOrDefault();
 
+            // Add user to members
             group.Members.Add((SilverUser) user);
 
             db.Entry(group).State = EntityState.Modified;
@@ -107,6 +110,7 @@ namespace SilverLinkAPI.Controllers
                 .Include(g => g.Members)
                 .FirstOrDefault();
 
+            // Remove user from members
             group.Members.Remove((SilverUser) user);
 
             db.Entry(group).State = EntityState.Modified;

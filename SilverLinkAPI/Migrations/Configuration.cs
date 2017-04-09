@@ -20,6 +20,7 @@ namespace SilverLinkAPI.Migrations
             var manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
             ApplicationUser user;
 
+            // Create initial users
             user = new SilverUser
             {
                 UserName = "92299962",
@@ -95,22 +96,8 @@ namespace SilverLinkAPI.Migrations
             };
             manager.Create(user, "Abcd!234");
 
-            //var friends = new List<Friend>
-            //{
-            //    new Friend{ UserId1=manager.FindByName("92299962").Id, UserId2=manager.FindByName("87654321").Id,RequestedAt=DateTime.Now, AcceptedAt=DateTime.Now},
-            //    new Friend{ UserId1=manager.FindByName("96482016").Id, UserId2=manager.FindByName("92299962").Id,RequestedAt=DateTime.Now, AcceptedAt=DateTime.Now},
-            //};
-            //friends.ForEach(s => context.Friends.Add(s));
-            //context.SaveChanges();
 
-            //var friendMsgs = new List<FriendMessage>
-            //{
-            //    new FriendMessage{FriendId=1,MessageText="Hello!",SilverUserId=manager.FindByName("92299962").Id, SentAt=DateTime.Now},
-            //    new FriendMessage{FriendId=1,MessageText="Hello to you too!",SilverUserId=manager.FindByName("87654321").Id, SentAt=DateTime.Now},
-            //};
-            //friendMsgs.ForEach(s => context.Messages.Add(s));
-            //context.SaveChanges();
-
+            // Create initial groups
             var groups = new List<Group>
             {
                 new Group

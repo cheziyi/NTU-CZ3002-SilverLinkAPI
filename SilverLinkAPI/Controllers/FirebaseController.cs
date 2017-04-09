@@ -7,11 +7,13 @@ namespace SilverLinkAPI.Controllers
 {
     public static class FirebaseController
     {
+        // Method to send FCM message to android device
         public static bool Notify(ApplicationUser user, string title, string body, FCMType type, int id)
         {
             if (user.DeviceId == null)
                 return false;
 
+            // Build message
             var message = JsonConvert.SerializeObject(new
             {
                 to = user.DeviceId,
@@ -27,6 +29,7 @@ namespace SilverLinkAPI.Controllers
                 }
             });
 
+            // Post to FCM server
             using (var client = new WebClient {UseDefaultCredentials = true})
             {
                 client.Headers.Add(HttpRequestHeader.ContentType, "application/json");

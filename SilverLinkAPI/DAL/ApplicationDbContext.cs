@@ -28,7 +28,7 @@ namespace SilverLinkAPI.DAL
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            // Dobule foreign key on Friend for Users
             modelBuilder.Entity<Friend>()
                 .HasRequired(p => p.User)
                 .WithMany()

@@ -69,6 +69,7 @@ namespace SilverLinkAPI.Controllers
             var user = manager.FindById(User.Identity.GetUserId());
             var carer = manager.FindById(userId);
 
+            // Check if user roles matches
             if (user.Role != UserRole.Silver || carer.Role != UserRole.Carer)
                 return BadRequest();
 
